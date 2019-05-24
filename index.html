@@ -15,4 +15,62 @@
 			$('.c3').css('color', 'black');
 		}
 	});
+
+
+	let record = getCookie('record');
+	let array = JSON.parse("[" + record + "]");
+
+	$('.c0').each(function(key, val){
+		let $this = $(this);
+
+		let input;
+		if(array.indexOf(key) !== -1){
+			input = `<input type="checkbox" key=${key} class="record" checked>`;
+		}else{
+			input = `<input type="checkbox" key=${key} class="record">`;
+		}
+
+		if($this.find('.c1').eq(0).text() !== ''){
+			$(this).find('.c1').eq(0).prepend(input);
+		}
+	});
+
+	$('.record').on('change', function(){
+		let record = getCookie('record');
+		let num = Number($(this).attr('key'));
+		if(!record){
+			setCookie('record', num, 30);
+		}else{
+			let array = JSON.parse("[" + record + "]");
+
+			if(!$(this).prop('checked')){
+				let index = array.indexOf(num);
+				if (index !== -1) {
+					array.splice(index, 1);
+				}
+			}else{
+				array.push(num);
+			}
+
+			let str = array.toString();
+
+			setCookie('record', str, 30);
+		}
+	});
+
+	function getCookie(name) {
+		var value = "; " + document.cookie;
+		var parts = value.split("; " + name + "=");
+		if (parts.length == 2) return parts.pop().split(";").shift();
+	}
+
+	function setCookie(name,value,days) {
+	    var expires = "";
+	    if (days) {
+	        var date = new Date();
+	        date.setTime(date.getTime() + (days*24*60*60*1000));
+	        expires = "; expires=" + date.toUTCString();
+	    }
+	    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+	}
 </script>
