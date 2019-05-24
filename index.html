@@ -18,7 +18,10 @@
 
 
 	let record = getCookie('record');
-	let array = JSON.parse("[" + record + "]");
+	let array = [];
+	if(record){
+		array = JSON.parse("[" + record + "]");
+	}
 
 	$('.c0').each(function(key, val){
 		let $this = $(this);
