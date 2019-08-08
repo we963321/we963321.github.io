@@ -68,9 +68,11 @@
 
 	let storage = localStorage.getItem('record') || [];
 
-	storage = storage.split(",").map(function(item) {
-	    return parseInt(item, 10);
-	});
+	if(storage.length > 0){
+		storage = storage.split(",").map(function(item) {
+		    return parseInt(item, 10);
+		});
+	}
 
 	$('.c0').each(function(key, val){
 		let $this = $(this);
