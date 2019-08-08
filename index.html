@@ -60,17 +60,24 @@
 		}
 	});
 
-	let record = getCookie('record');
+	/*let record = getCookie('record');
 	let array = [];
 	if(record){
 		array = JSON.parse("[" + record + "]");
-	}
+	}*/
+
+	let storage = localStorage.getItem('record') || [];
+
+	storage = storage.split(",").map(function(item) {
+	    return parseInt(item, 10);
+	});
 
 	$('.c0').each(function(key, val){
 		let $this = $(this);
 
 		let input;
-		if(array.indexOf(key) !== -1){
+
+		if(storage.indexOf(key) !== -1){
 			input = `<input type="checkbox" key=${key} class="record" checked>`;
 		}else{
 			input = `<input type="checkbox" key=${key} class="record">`;
@@ -87,32 +94,41 @@
 
 		let attr_key = Number($this.attr('key'));
 
-		if(array.indexOf(attr_key) !== -1){
+		if(storage.indexOf(attr_key) !== -1){
 			$this.prop('checked', true);
 		}
 	});
 
-
 	$('.record, #vocabulary input[type=checkbox]').on('change', function(){
-		let record = getCookie('record');
+		//let record = getCookie('record');
 		let num = Number($(this).attr('key'));
-		if(!record){
-			setCookie('record', num, 30);
+		if(!storage){
+			//setCookie('record', num, 30);
+			setLocalStorage('record', storage);
 		}else{
-			let array = JSON.parse("[" + record + "]");
+			//let array = JSON.parse("[" + record + "]");
 
 			if(!$(this).prop('checked')){
-				let index = array.indexOf(num);
+				/*let index = array.indexOf(num);
 				if (index !== -1) {
 					array.splice(index, 1);
+				}*/
+
+				let i = storage.indexOf(num);
+
+				if (i !== -1) {
+					storage.splice(i, 1);
 				}
 			}else{
-				array.push(num);
+				//array.push(num);
+				storage.push(num);
 			}
 
-			let str = array.toString();
+			//let str = array.toString();
 
-			setCookie('record', str, 30);
+			//setCookie('record', str, 30);
+
+			setLocalStorage('record', storage);
 		}
 	});
 
@@ -130,5 +146,9 @@
 	        expires = "; expires=" + date.toUTCString();
 	    }
 	    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+	}
+
+	function setLocalStorage(name, arr) {
+		localStorage.setItem(name, arr);
 	}
 </script>
