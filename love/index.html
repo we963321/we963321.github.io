@@ -65,10 +65,10 @@
             $('#wheelcanvas').rotate({
                 angle: 0,
                 animateTo: angles + 1800,
-                duration: 8000,
+                duration: 800,
                 callback: function() {
                     //showMask();
-                    alert(txt);
+                    alert('恭喜慈慈抽到: '+txt);
                     turnplate.bRotate = !turnplate.bRotate;
                 }
             });
@@ -86,9 +86,9 @@
 
 
     function rnd(n, m) {
-        var rnd = Math.random();
-        if (rnd <= .5) return 4;
-        return 9;
+        m = m + 1;
+        var rnd = Math.floor(Math.random() * (m - n) + n);
+        return rnd;
     }
 
     //頁面所有元素加載完畢後執行drawRouletteWheel()方法對轉盤進行渲染
