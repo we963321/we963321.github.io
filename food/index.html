@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="yes" name="apple-touch-fullscreen" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta charset="UTF-8">
+    <title>慈慈去哪ㄦ</title>
+    <link href="css/style.css" rel="stylesheet" type="text/css">
+</head>
+
+<body style="">
+    <!-- main -->
+    <div class="banner">
+        <img src="images/title.png" alt="award rotation title" class="logo">
+        <div class="turnplate">
+            <canvas class="item" id="wheelcanvas" width="422px" height="422px"></canvas>
+            <img class="pointer" src="images/turnplate-pointer2.png" alt="award rotation start" />
+        </div>
+    </div>
+
+    <script type="text/javascript" src="js/zepto.min.js"></script>
+    <script type="text/javascript" src="js/awardRotate.js"></script>
+    <script type="text/javascript">
+
+    // 轉盤區域
+    var turnplate = {
+        restaraunts: [], //大轉盤獎品名稱
+        colors: [], //大轉盤獎品區塊對應背景顏色
+        outsideRadius: 178, //大轉盤外圓的半徑
+        textRadius: 145, //大轉盤獎品位置距離圓心的距離
+        insideRadius: 58, //大轉盤內圓的半徑
+        startAngle: 0, //開始角度
+
+        bRotate: false //false:停止;ture:旋轉
+    };
+
+    $(document).ready(function() {
+        //動態添加大轉盤的獎品與獎品區域背景顏色4927
+        turnplate.restaraunts = ["新竹", "苗栗", "台中", "彰化", "南投", "雲林", "嘉義", "秘密"];
+        turnplate.colors = ["#e7ae5d", "#6d8059", "#e7ae5d", "#6d8059", "#e7ae5d", "#6d8059", "#e7ae5d", "#6d8059"];
+
+
+        var rotateTimeOut = function() {
+            $('#wheelcanvas').rotate({
+                angle: 0,
+                animateTo: 2160,
+                duration: 8000,
+                callback: function() {
+                    alert('喔NO~!');
+                }
+            });
+        };
+
+        //旋轉轉盤 item:獎品位置; txt：提示語;
+        var rotateFn = function(item, txt) {
+            var angles = item * (360 / turnplate.restaraunts.length) - (360 / (turnplate.restaraunts.length * 2)) - 72;
+            if (angles < 270) {
+                angles = 270 - angles;
+            } else {
+                angles = 360 - angles + 270;
+            }
+            $('#wheelcanvas').stopRotate();
+            $('#wheelcanvas').rotate({
+                angle: 0,
+                animateTo: angles + 1800,
+                duration: 8000,
+                callback: function() {
+                    //showMask();
+                    alert('恭喜慈慈抽到: '+txt);
+                    turnplate.bRotate = !turnplate.bRotate;
+                }
+            });
+        };
+        $('.pointer').click(function() {
+            if (turnplate.bRotate) return;
+            turnplate.bRotate = !turnplate.bRotate;
+            //獲取隨機數
+            var item = rnd(1, turnplate.restaraunts.length);
+            //獎品數量等於10,指針落在對應獎品區域的中心角度[252, 216, 180, 144, 108, 72, 36, 360, 324, 288]
+            rotateFn(item, turnplate.restaraunts[item - 1]);
+        
+        });
+    });
+
+
+    function rnd(n, m) {
+        m = m + 1;
+        var rnd = Math.floor(Math.random() * (m - n) + n);
+        return rnd;
+    }
+
+    //頁面所有元素加載完畢後執行drawRouletteWheel()方法對轉盤進行渲染
+    window.onload = function() {
+        drawRouletteWheel();
+    };
+
+    function drawRouletteWheel() {
+        var canvas = document.getElementById("wheelcanvas");
+        if (canvas.getContext) {
+            //根據獎品個數計算圓周角度
+            var arc = Math.PI / (turnplate.restaraunts.length / 2);
+            var ctx = canvas.getContext("2d");
+            //在給定矩形內清空一個矩形
+            //ctx.clearRect(0,0,422,422);
+            //strokeStyle 屬性設置或返回用於筆觸的顏色、漸變或模式  
+            ctx.strokeStyle = "#FFBE04";
+            //font 屬性設置或返回畫布上文本內容的當前字體屬性
+            ctx.font = '16px Microsoft YaHei';
+            for (var i = 0; i < turnplate.restaraunts.length; i++) {
+                var angle = turnplate.startAngle + i * arc;
+                ctx.fillStyle = turnplate.colors[i];
+                ctx.beginPath();
+                //arc(x,y,r,起始角,結束角,繪制方向) 方法創建弧/曲線（用於創建圓或部分圓）    
+                ctx.arc(211, 211, turnplate.outsideRadius, angle, angle + arc, false);
+                ctx.arc(211, 211, turnplate.insideRadius, angle + arc, angle, true);
+                ctx.stroke();
+                ctx.fill();
+                //鎖畫布(為了保存之前的畫布狀態)
+                ctx.save();
+
+                //----繪制獎品開始----
+                ctx.fillStyle = "#fff";
+                var text_allin = turnplate.restaraunts;
+                console.log(text_allin.indexOf("8"));
+                var text = turnplate.restaraunts[i];
+                var line_height = 17;
+                //translate方法重新映射畫布上的 (0,0) 位置
+                ctx.translate(211 + Math.cos(angle + arc / 2) * turnplate.textRadius, 211 + Math.sin(angle + arc / 2) * turnplate.textRadius);
+                console.log((angle + arc / 2 + Math.PI / 2));
+                //rotate方法旋轉當前的繪圖
+                ctx.rotate(angle + arc / 2 + Math.PI / 2 - 1.64); //-1.64定位
+
+                /** 下面代碼根據獎品類型、獎品名稱長度渲染不同效果，如字體、顏色、圖片效果。(具體根據實際情況改變) **/
+                if (text.length == 2 && i % 2 == 0) { //偶數位86
+                    var texts = text.split("元");
+                    texts[1] = "";
+                    for (var j = 0; j < texts.length; j++) {
+                        ctx.fillStyle = "#f4446a";
+                        ctx.font = j == 0 ? 'bold 20px Microsoft YaHei' : 'bold 18px Microsoft YaHei';
+                        ctx.textAlign = "center";
+                        if (j == 0) {
+                            ctx.fillText(texts[j], -ctx.measureText(texts[j]).width / 2, j * line_height + 6);
+                        } else {
+                            ctx.fillText(texts[j], 12, 5);
+                        }
+                    }
+                } else if (text.length == 2 && i % 2 != 0) { //奇數位86
+                    var texts = text.split("元");
+                    texts[1] = "";
+                    for (var j = 0; j < texts.length; j++) {
+                        ctx.fillStyle = "#fff";
+                        ctx.font = j == 0 ? 'bold 20px Microsoft YaHei' : 'bold 18px Microsoft YaHei';
+                        ctx.textAlign = "center";
+                        if (j == 0) {
+                            ctx.fillText(texts[j], -ctx.measureText(texts[j]).width / 2, j * line_height + 6);
+                        } else {
+                            ctx.fillText(texts[j], 12, 5);
+                        }
+                    }
+                } else if (i % 2 != 0) { //偶數位其他
+                    var texts = text.split("元");
+                    texts[2] = "";
+                    for (var j = 0; j < texts.length; j++) {
+                        ctx.font = j == 0 ? 'normal 28px Microsoft YaHei' : 'bold 18px Microsoft YaHei';
+                        ctx.textAlign = "center";
+                        if (j == 0) {
+                            ctx.fillText(texts[j], -ctx.measureText(texts[j]).width / 2, j * line_height + 6);
+                        } else {
+                            ctx.fillText(texts[j], 12, 5);
+                        }
+                    }
+                } else { //奇數位其他
+                    var texts = text.split("元");
+                    texts[2] = "";
+                    ctx.fillStyle = "#f4446a";
+                    for (var j = 0; j < texts.length; j++) {
+                        ctx.font = j == 0 ? 'normal 28px Microsoft YaHei' : 'bold 18px Microsoft YaHei';
+                        ctx.textAlign = "center";
+                        if (j == 0) {
+                            ctx.fillText(texts[j], -ctx.measureText(texts[j]).width / 2, j * line_height + 6);
+                        } else {
+                            ctx.fillText(texts[j], 12, 5);
+                        }
+                    }
+                }
+                //把當前畫布返回（調整）到上一個save()狀態之前 
+                ctx.restore();
+                //----繪制獎品結束----
+            }
+        }
+    }
+    </script>
+</body>
+
+</html>
