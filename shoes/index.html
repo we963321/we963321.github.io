@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="yes" name="apple-touch-fullscreen" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta charset="UTF-8">
+    <title>鞋鞋STEPN計算機</title>
+</head>
+
+<body style="">
+    <!-- main -->
+    <input type="text" name="energy" placeholder="你的總能量">
+
+    <input type="text" name="luck" placeholder="主鞋幸運值">
+
+    <input type="text" name="rate" placeholder="掉落寶相機率" readonly disabled>
+
+    <div style="padding:20px">
+        <img src="ppp.png">
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript">
+
+        $(`input[name=energy], input[name=luck]`).on('change', function(){
+
+            let energy = parseInt($(`input[name=energy]`).val());
+            let luck = parseInt($(`input[name=luck]`).val());
+
+            let rate = energy * Math.pow(luck, 0.3);
+
+            if(isNaN(rate)){
+                return false;
+            }
+
+            $(`input[name=rate]`).val(rate);
+
+        });
+    </script>
+</body>
+
+</html>
