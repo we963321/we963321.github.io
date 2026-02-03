@@ -7,6 +7,8 @@
     <style>
         :root {
             --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --clear-color: #fab1a0;
             --bg-color: #f9f9fb;
             --card-bg: #ffffff;
             --text-color: #2d3436;
@@ -26,22 +28,24 @@
         .container {
             background-color: var(--card-bg);
             padding: 2rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            width: 90%;
-            max-width: 400px;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+            width: 85%;
+            max-width: 380px;
             text-align: center;
         }
 
         h2 {
+            margin-top: 0;
             margin-bottom: 1.5rem;
             color: var(--primary-color);
-            font-size: 1.5rem;
+            font-size: 1.6rem;
+            letter-spacing: 1px;
         }
 
         .input-group {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             margin-bottom: 1.5rem;
         }
 
@@ -51,62 +55,78 @@
 
         label {
             display: block;
-            font-size: 0.8rem;
-            margin-bottom: 5px;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
             color: #636e72;
+            font-weight: bold;
         }
 
         input {
             width: 100%;
-            padding: 12px 5px;
-            border: 2px solid #eee;
-            border-radius: 10px;
-            font-size: 1.1rem;
+            padding: 15px 0;
+            border: 2px solid #edf2f7;
+            border-radius: 12px;
+            font-size: 1.2rem;
             text-align: center;
             outline: none;
-            transition: border-color 0.3s;
-            -webkit-appearance: none; /* 移除手機端內建陰影 */
+            transition: all 0.3s;
+            background-color: #fdfdfd;
+            box-sizing: border-box;
+            -webkit-appearance: none;
         }
 
         input:focus {
             border-color: var(--primary-color);
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
         }
 
         button {
-            width: 100%;
-            padding: 15px;
+            flex: 2;
+            padding: 16px;
             background-color: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 12px;
+            border-radius: 15px;
             font-size: 1.1rem;
             font-weight: bold;
             cursor: pointer;
-            transition: transform 0.1s, opacity 0.2s;
+            transition: all 0.2s;
+        }
+
+        button.btn-clear {
+            flex: 1;
+            background-color: #ffeaa7;
+            color: #d63031;
         }
 
         button:active {
-            transform: scale(0.98);
-            opacity: 0.9;
+            transform: scale(0.95);
         }
 
         #result {
             margin-top: 2rem;
-            padding: 15px;
-            border-radius: 12px;
-            background-color: #f1f2f6;
-            min-height: 50px;
+            padding: 20px 15px;
+            border-radius: 18px;
+            background: linear-gradient(145deg, #f0f3f9, #ffffff);
+            min-height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 500;
-            line-height: 1.5;
+            font-size: 1rem;
+            color: #636e72;
+            border: 1px solid #e2e8f0;
         }
 
         .highlight {
             color: var(--primary-color);
-            font-size: 1.3rem;
-            font-weight: bold;
+            font-size: 1.5rem;
+            font-weight: 800;
             margin: 0 4px;
         }
     </style>
@@ -114,46 +134,51 @@
 <body>
 
 <div class="container">
-    <h2>民國年齡計算器</h2>
+    <h2>🎂 年齡計算器</h2>
     
     <div class="input-group">
         <div class="input-box">
             <label>民國年</label>
-            <input type="number" id="rocYear" placeholder="" pattern="\d*">
+            <input type="number" id="rocYear" placeholder="84" pattern="\d*" inputmode="numeric">
         </div>
         <div class="input-box">
             <label>月</label>
-            <input type="number" id="month" placeholder="" min="1" max="12" pattern="\d*">
+            <input type="number" id="month" placeholder="4" min="1" max="12" pattern="\d*" inputmode="numeric">
         </div>
         <div class="input-box">
             <label>日</label>
-            <input type="number" id="day" placeholder="" min="1" max="31" pattern="\d*">
+            <input type="number" id="day" placeholder="14" min="1" max="31" pattern="\d*" inputmode="numeric">
         </div>
     </div>
 
-    <button onclick="calculateAge()">開始計算</button>
+    <div class="btn-group">
+        <button onclick="calculateAge()">開始計算</button>
+        <button class="btn-clear" onclick="clearAll()">清除</button>
+    </div>
 
-    <div id="result">請輸入生日並點擊按鈕</div>
+    <div id="result">輸入生日查看你的年齡</div>
 </div>
 
 <script>
     function calculateAge() {
-        const rYear = parseInt(document.getElementById('rocYear').value);
-        const month = parseInt(document.getElementById('month').value) - 1; // JS 月份從 0 開始
-        const day = parseInt(document.getElementById('day').value);
+        const rYearInput = document.getElementById('rocYear').value;
+        const monthInput = document.getElementById('month').value;
+        const dayInput = document.getElementById('day').value;
 
-        if (isNaN(rYear) || isNaN(month) || isNaN(day)) {
+        if (!rYearInput || !monthInput || !dayInput) {
             alert("請填寫完整的年月日唷！");
             return;
         }
 
-        // 民國轉西元
+        const rYear = parseInt(rYearInput);
+        const month = parseInt(monthInput) - 1; 
+        const day = parseInt(dayInput);
+
         const birthDate = new Date(rYear + 1911, month, day);
         const today = new Date();
 
-        // 檢查日期是否合法 (例如避免輸入 2月31日)
-        if (birthDate.getMonth() !== month) {
-            alert("請輸入正確的日期格式！");
+        if (birthDate.getMonth() !== month || birthDate.getDate() !== day) {
+            alert("日期好像不太對，請檢查一下！");
             return;
         }
 
@@ -161,12 +186,10 @@
         let months = today.getMonth() - birthDate.getMonth();
         let days = today.getDate() - birthDate.getDate();
 
-        // 如果天數為負，借一個月
         if (days < 0) {
             months--;
         }
 
-        // 如果月份為負，借一年
         if (months < 0) {
             years--;
             months += 12;
@@ -175,10 +198,17 @@
         const resultDiv = document.getElementById('result');
         
         if (years < 0) {
-            resultDiv.innerHTML = "這個日期還沒出生喔！😅";
+            resultDiv.innerHTML = "這個日期還沒出生喔！🐣";
         } else {
             resultDiv.innerHTML = `你的年齡是...<br><span class="highlight">${years}</span> 歲又 <span class="highlight">${months}</span> 個月！`;
         }
+    }
+
+    function clearAll() {
+        document.getElementById('rocYear').value = '';
+        document.getElementById('month').value = '';
+        document.getElementById('day').value = '';
+        document.getElementById('result').innerHTML = '輸入生日查看你的年齡';
     }
 </script>
 
